@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900;
+}
+
+::selection {
+  background-color: #2f855a20;
+  color: #0f172a;
+}
+
+.glass-panel {
+  @apply bg-white/80 dark:bg-slate-900/70 backdrop-blur-md border border-white/60 dark:border-slate-700 shadow-soft rounded-3xl;
+}
+
+.section-shell {
+  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+}
