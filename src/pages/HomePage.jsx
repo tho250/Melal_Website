@@ -186,7 +186,7 @@ export function HomePage() {
               </motion.div>
               <span>
                 Serving Zindiro with{' '}
-                <span className="font-semibold text-emerald-200">20M+ RWF</span> monthly sales
+                <span className="font-semibold text-emerald-200">Fair prices</span> every day.
               </span>
             </motion.div>
           </motion.div>
@@ -211,7 +211,7 @@ export function HomePage() {
                   </div>
                   <div className="rounded-2xl bg-slate-900/70 px-3 py-2 text-right text-[11px] text-slate-200 ring-1 ring-emerald-400/40">
                     <p className="font-semibold text-emerald-200">Open today</p>
-                    <p>7:00am – 9:00pm</p>
+                    <p>8:00am – 10:30pm</p>
                   </div>
                 </div>
                 <div className="mt-5 grid gap-3 text-[11px] text-slate-200">
@@ -270,7 +270,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us + Monthly Sales */}
+      {/* Why Choose Us */}
       <section className="grid gap-8 md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)]">
         <motion.div
           initial="hidden"
@@ -322,12 +322,7 @@ export function HomePage() {
               Boutique La Différence serves a growing base of families, students, and small
               businesses in Zindiro.
             </p>
-            <p className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              Over <span className="text-emerald-600 dark:text-emerald-300">20M RWF</span>
-              <span className="block text-base font-normal text-slate-500">
-                in verified monthly sales volume
-              </span>
-            </p>
+            
           </div>
           <div className="mt-1 flex items-center justify-between text-xs">
             <p className="flex items-center gap-1 text-emerald-600 dark:text-emerald-300">

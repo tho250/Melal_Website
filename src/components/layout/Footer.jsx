@@ -2,29 +2,25 @@ import React from 'react';
 import { MapPin, Phone, Instagram, Facebook, Clock, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// Mon(1)–Thu(4): 8:00 AM – 10:00 PM  |  Fri(5)–Sun(0): 8:00 AM – 10:30 PM
+function getHoursForDay(dayIndex) {
+  return dayIndex >= 1 && dayIndex <= 4
+    ? '8:00 AM – 10:00 PM'
+    : '8:00 AM – 10:30 PM';
+}
+
 function isOpenNow() {
   const now = new Date();
-  const day = now.getDay(); // 0 = Sunday
-  const hour = now.getHours();
-  const minute = now.getMinutes();
-  const asMinutes = hour * 60 + minute;
-
-  const weekday = day >= 1 && day <= 6;
-  const sunday = day === 0;
-
-  if (weekday) {
-    // 7:00–21:00
-    return asMinutes >= 7 * 60 && asMinutes <= 21 * 60;
-  }
-  if (sunday) {
-    // 8:00–20:00
-    return asMinutes >= 8 * 60 && asMinutes <= 20 * 60;
-  }
-  return false;
+  const day = now.getDay();
+  const asMinutes = now.getHours() * 60 + now.getMinutes();
+  const closeMinutes = day >= 1 && day <= 4 ? 22 * 60 : 22 * 60 + 30;
+  return asMinutes >= 8 * 60 && asMinutes < closeMinutes;
 }
 
 export function Footer() {
   const open = isOpenNow();
+  const today = new Date().getDay();
+  const tomorrow = (today + 1) % 7;
 
   return (
     <footer className="mt-16 border-t border-slate-200/80 bg-white/80 py-10 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-300">
@@ -70,8 +66,8 @@ export function Footer() {
             </p>
             <p className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-brand" />
-              <a href="tel:+250783350228" className="hover:text-brand">
-                +250 783 350 228
+              <a href="tel:+250794018454" className="hover:text-brand">
+                +250 794 018 454
               </a>
             </p>
             <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700">
@@ -92,13 +88,13 @@ export function Footer() {
           <div className="mt-2 space-y-1 text-sm">
             <p className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-brand" />
-              <span>Mon – Sat: 7:00am – 9:00pm</span>
+              <span>Today: {getHoursForDay(today)}</span>
             </p>
-            <p className="pl-6">Sunday: 8:00am – 8:00pm</p>
+            <p className="pl-6">Tomorrow: {getHoursForDay(tomorrow)}</p>
           </div>
           <div className="mt-4 flex gap-2">
             <a
-              href="https://wa.me/250783350228"
+              href="https://wa.me/250794018454"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1 rounded-full bg-brand px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark"

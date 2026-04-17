@@ -125,20 +125,7 @@ export function AboutPage() {
           variants={blockVariants}
           className="space-y-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300"
         >
-          <h2 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-white">
-            <Users className="h-5 w-5 text-emerald-500" />
-            Community impact
-          </h2>
-          <p>
-            Beyond transactions, Boutique La Différence aims to be a steady part of daily life in
-            Zindiro. We support local farmers and suppliers where possible, and we hire from the
-            surrounding community to keep value circulating close to home.
-          </p>
-          <p>
-            Our growth — now handling over 20M RWF in monthly sales — is driven by repeat visits and
-            word-of-mouth referrals. This is a responsibility we take seriously, and it pushes us to
-            continually improve the shopping experience.
-          </p>
+            
         </motion.div>
 
         <motion.div
@@ -153,12 +140,6 @@ export function AboutPage() {
             At a glance
           </p>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                20M+ RWF / month
-              </p>
-              <p className="mt-1 text-[11px] text-slate-500">Average monthly sales volume.</p>
-            </div>
             <div>
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                 7 days / week
