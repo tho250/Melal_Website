@@ -48,7 +48,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-50 to-slate-100 text-slate-900 transition-colors dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 dark:text-slate-50">
+    <div className="min-h-screen bg-white text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-50">
       <Navbar darkMode={darkMode} onToggleDarkMode={handleToggleDarkMode} />
       <ScrollToTopOnRouteChange />
 
@@ -60,7 +60,7 @@ export default function App() {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             className="section-shell"
           >
             <Routes location={location} key={location.pathname}>
@@ -72,15 +72,15 @@ export default function App() {
                 path="*"
                 element={
                   <div className="py-20 text-center">
-                    <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
                       Page not found
                     </h1>
-                    <p className="mt-2 text-slate-500">
+                    <p className="mt-2 text-sm text-slate-500">
                       The page you&apos;re looking for doesn&apos;t exist.
                     </p>
                     <Link
                       to="/"
-                      className="mt-6 inline-flex items-center rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-dark"
+                      className="btn-primary mt-6 inline-flex items-center"
                     >
                       Back to home
                     </Link>

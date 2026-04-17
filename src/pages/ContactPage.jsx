@@ -7,7 +7,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: 'easeOut' }
+    transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }
   }
 };
 
@@ -43,12 +43,12 @@ export function ContactPage() {
   const todayName = DAILY_HOURS[todayIndex === 0 ? 6 : todayIndex - 1].day;
 
   return (
-    <div className="space-y-8 pb-10">
-      <section className="max-w-3xl">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+    <div className="space-y-10 pb-12">
+      <section className="max-w-2xl">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           Contact Boutique La Différence
         </h1>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
           Have a question about stock, pricing, or deliveries? Reach out and we&apos;ll be happy to
           assist. Send us a WhatsApp message or visit the shop in Zindiro, Kigali.
         </p>
@@ -59,12 +59,12 @@ export function ContactPage() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={containerVariants}
-        className="grid gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.1fr)] md:items-start"
+        className="grid gap-6 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.1fr)] md:items-start"
       >
         {/* Left column: WhatsApp form + contact info */}
-        <div className="space-y-4">
-          <div className="glass-panel p-5">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+        <div className="space-y-5">
+          <div className="card-base p-5">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
               Send us a message on WhatsApp
             </h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -86,7 +86,7 @@ export function ContactPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 transition focus:border-brand focus:ring-2 focus:ring-brand/40 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50"
+                  className="input-base mt-1"
                   placeholder="Your full name"
                 />
               </div>
@@ -104,13 +104,13 @@ export function ContactPage() {
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 transition focus:border-brand focus:ring-2 focus:ring-brand/40 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50"
+                  className="input-base mt-1"
                   placeholder="How can we help you?"
                 />
               </div>
               <button
                 type="submit"
-                className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-emerald-600"
+                className="btn-primary mt-2 inline-flex items-center justify-center gap-2"
               >
                 <MessageCircle className="h-4 w-4" />
                 Open in WhatsApp
@@ -119,8 +119,8 @@ export function ContactPage() {
           </div>
 
           {/* Contact info: address + email */}
-          <div className="rounded-3xl border border-slate-100 bg-white/80 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Find us</h2>
+          <div className="card-base p-5">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">Find us</h2>
             <div className="mt-3 space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
               <p className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
@@ -140,20 +140,20 @@ export function ContactPage() {
         </div>
 
         {/* Right column: Opening hours */}
-        <div className="rounded-3xl border border-slate-100 bg-white/80 p-5 text-sm shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
+        <div className="card-base p-5 text-sm">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
             <Clock className="h-4 w-4 text-brand" />
             Opening Hours
           </h2>
 
           {/* Full daily schedule */}
-          <div className="mt-4 space-y-1.5">
+          <div className="mt-4 space-y-1">
             {DAILY_HOURS.map(({ day, hours }) => {
               const isToday = day === todayName;
               return (
                 <div
                   key={day}
-                  className={`flex items-center justify-between rounded-xl px-3 py-2 text-sm transition ${
+                  className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition ${
                     isToday
                       ? 'bg-brand/10 font-semibold text-brand dark:bg-brand/20'
                       : 'text-slate-600 odd:bg-slate-50 dark:text-slate-300 dark:odd:bg-slate-800/40'
@@ -167,7 +167,7 @@ export function ContactPage() {
           </div>
 
           {/* Today / Tomorrow highlight */}
-          <div className="mt-4 rounded-2xl border border-brand/20 bg-brand/5 px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
+          <div className="mt-4 rounded-xl border border-brand/20 bg-brand/5 px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
             <p>
               <span className="font-semibold">Today:</span> {getDailyHours(todayIndex)}
             </p>
@@ -180,4 +180,3 @@ export function ContactPage() {
     </div>
   );
 }
-

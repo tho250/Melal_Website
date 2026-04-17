@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ShoppingCart, X, Tag, ArrowUpDown } from 'lucide-react';
+import { ShoppingCart, X, Tag, ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
 
 const PLACEHOLDER_IMAGE =
   'https://images.pexels.com/photos/4397924/pexels-photo-4397924.jpeg?auto=compress&cs=tinysrgb&w=800';
@@ -10,7 +10,7 @@ const cardVariants = {
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, delay: 0.04 * i, ease: 'easeOut' }
+    transition: { duration: 0.4, delay: 0.04 * i, ease: [0.25, 0.1, 0.25, 1] }
   })
 };
 
@@ -135,40 +135,63 @@ export function ProductsPage() {
     return result;
   }, [products, selectedCompanies, selectedCategories, debouncedSearch, sort, order]);
 
+  const activeFilterCount =
+    selectedCompanies.length + selectedCategories.length + (debouncedSearch ? 1 : 0);
   const skeletonCount = 8;
 
   return (
-    <div className="pb-8">
-      <header className="sticky top-0 z-30 space-y-4 bg-slate-50/80 pb-4 backdrop-blur-md dark:bg-slate-950/80">
-        <div className="max-w-3xl">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            Products at Boutique La Différence
+    <div className="pb-12">
+      {/* Page header */}
+      <header className="sticky top-0 z-30 -mx-5 space-y-4 bg-white/80 px-5 pb-5 pt-1 backdrop-blur-xl dark:bg-slate-950/80 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="max-w-2xl">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Our Products
           </h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Browse the latest inventory across all categories. Tap filters to explore by brand,
-            shelf, or budget.
+          <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+            Browse the latest inventory. Use filters to explore by brand, category, or price.
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-3xl border border-slate-100 bg-white/70 p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
+        {/* Filter bar */}
+        <div className="card-base space-y-3 p-4">
+          {/* Search + indicator row */}
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="relative w-full md:max-w-xs">
+            <label className="relative w-full md:max-w-sm">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by product, company, or category..."
-                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50"
+                placeholder="Search products, brands, categories…"
+                className="input-base pl-10"
               />
-            </div>
-            <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-              <Tag className="h-3.5 w-3.5" />
-              <span>Tap categories and brands to refine your view. Multiple selections are allowed.</span>
+            </label>
+            <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              <span>
+                {activeFilterCount > 0
+                  ? `${activeFilterCount} filter${activeFilterCount > 1 ? 's' : ''} active`
+                  : 'No filters active'}
+              </span>
+              {activeFilterCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setSelectedCategories([]);
+                    setSelectedCompanies([]);
+                  }}
+                  className="ml-1 font-semibold text-brand hover:text-brand-dark"
+                >
+                  Clear all
+                </button>
+              )}
             </div>
           </div>
 
+          {/* Category + Company chips */}
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {categories.map((c) => {
                 const active = selectedCategories.includes(c);
                 return (
@@ -180,19 +203,15 @@ export function ProductsPage() {
                         prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
                       )
                     }
-                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition ${
-                      active
-                        ? 'bg-brand text-white shadow-soft'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700'
-                    }`}
+                    className={`chip ${active ? 'chip-active' : 'chip-inactive'}`}
                   >
-                    <span>{c}</span>
+                    {c}
                   </button>
                 );
               })}
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {companies.map((c) => {
                 const label = c.charAt(0).toUpperCase() + c.slice(1);
                 const active = selectedCompanies.includes(c);
@@ -205,21 +224,22 @@ export function ProductsPage() {
                         prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
                       )
                     }
-                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition ${
+                    className={`chip ${
                       active
-                        ? 'bg-slate-900 text-white shadow-soft dark:bg-slate-50 dark:text-slate-900'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700'
+                        ? 'bg-slate-900 text-white shadow-sm dark:bg-slate-100 dark:text-slate-900'
+                        : 'chip-inactive'
                     }`}
                   >
-                    <span>{label}</span>
+                    {label}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-t border-slate-200 pt-2 text-xs dark:border-slate-800">
-            <span className="mr-1 flex items-center gap-1 text-slate-500 dark:text-slate-400">
+          {/* Sort row */}
+          <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3 text-xs dark:border-slate-800">
+            <span className="mr-1 flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
               <ArrowUpDown className="h-3.5 w-3.5" />
               Sort:
             </span>
@@ -245,10 +265,10 @@ export function ProductsPage() {
                       setOrder(nextOrder);
                     }
                   }}
-                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1 transition ${
+                  className={`chip ${
                     isActive
-                      ? 'bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-900'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700'
+                      ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                      : 'chip-inactive'
                   }`}
                 >
                   {opt.label}
@@ -261,126 +281,142 @@ export function ProductsPage() {
 
       {/* Loading skeletons */}
       {loading && (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: skeletonCount }).map((_, idx) => (
             <div
               key={idx}
-              className="flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white/60 text-sm shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900/80 dark:ring-slate-800"
+              className="card-base overflow-hidden"
             >
-              <div className="aspect-[4/3] w-full animate-pulse bg-slate-200/80 dark:bg-slate-800" />
-              <div className="flex flex-1 flex-col gap-2 p-4">
-                <div className="h-3 w-20 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
-                <div className="h-4 w-32 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
-                <div className="h-4 w-16 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
-                <div className="mt-2 h-7 w-24 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
+              <div className="aspect-[4/3] w-full animate-pulse bg-slate-100 dark:bg-slate-800" />
+              <div className="flex flex-col gap-2.5 p-4">
+                <div className="h-3 w-16 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
+                <div className="h-4 w-32 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
+                <div className="h-4 w-20 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
+                <div className="mt-1 h-8 w-24 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Masonry layout */}
+      {/* Product grid */}
       {!loading && (
-        <div className="mt-6 columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {!loading &&
-          !error &&
-          visibleProducts.map((product, idx) => (
-            <motion.article
-              key={product.id || product.name}
-              custom={idx}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={cardVariants}
-              className="mb-4 inline-block w-full break-inside-avoid overflow-hidden rounded-3xl border border-slate-100 bg-white/70 text-sm shadow-sm ring-1 ring-slate-100/70 transition hover:-translate-y-1 hover:shadow-soft dark:border-slate-800 dark:bg-slate-900/80 dark:ring-slate-800"
-            >
-              <button
-                type="button"
-                onClick={() => setQuickViewProduct(product)}
-                className="group block text-left"
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {!error &&
+            visibleProducts.map((product, idx) => (
+              <motion.article
+                key={product.id || product.name}
+                custom={idx}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.15 }}
+                variants={cardVariants}
+                className="card-base card-hover group overflow-hidden"
               >
-                <div className="relative">
-                  <div className="aspect-[4/3] w-full overflow-hidden">
-                    <img
-                      src={product.imageUrl || PLACEHOLDER_IMAGE}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
-                </div>
-                <div className="flex flex-1 flex-col p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-500">
-                    {product.category || 'Uncategorised'}
-                  </p>
-                  <h2 className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
-                    {product.name}
-                  </h2>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    Quantity in stock:{' '}
-                    <span className="font-semibold text-slate-700 dark:text-slate-200">
-                      {Number.isFinite(product.quantity) ? product.quantity : '—'}
+                <button
+                  type="button"
+                  onClick={() => setQuickViewProduct(product)}
+                  className="block w-full text-left"
+                >
+                  <div className="relative overflow-hidden">
+                    <div className="aspect-[4/3] w-full bg-slate-50 dark:bg-slate-800">
+                      <img
+                        src={product.imageUrl || PLACEHOLDER_IMAGE}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                    {/* Category badge */}
+                    <span className="absolute left-3 top-3 rounded-lg bg-white/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-900/90 dark:text-slate-300">
+                      {product.category || 'Uncategorised'}
                     </span>
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-emerald-600 dark:text-emerald-300">
-                    {Number.isFinite(product.price)
-                      ? `RWF ${product.price.toLocaleString()}`
-                      : 'N/A'}
-                  </p>
-                </div>
+                    {/* Stock badge */}
+                    {Number.isFinite(product.quantity) && product.quantity === 0 && (
+                      <span className="absolute right-3 top-3 rounded-lg bg-red-500/90 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                        Out of Stock
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col p-4">
+                    <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+                      {product.name}
+                    </h2>
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                      {Number.isFinite(product.quantity)
+                        ? `${product.quantity} in stock`
+                        : 'Stock N/A'}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-base font-bold text-slate-900 dark:text-white">
+                        {Number.isFinite(product.price)
+                          ? `RWF ${product.price.toLocaleString()}`
+                          : 'N/A'}
+                      </p>
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand/10 text-brand opacity-0 transition-all duration-300 group-hover:opacity-100">
+                        <ShoppingCart className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              </motion.article>
+            ))}
+
+          {!error && visibleProducts.length === 0 && (
+            <div className="col-span-full card-base px-8 py-14 text-center">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                No products match your current filters.
+              </p>
+              <button
+                onClick={() => {
+                  setSearch('');
+                  setSelectedCategories([]);
+                  setSelectedCompanies([]);
+                }}
+                className="mt-3 text-xs font-semibold text-brand hover:text-brand-dark hover:underline"
+              >
+                Clear all filters
               </button>
-            </motion.article>
-          ))}
+            </div>
+          )}
 
-       {!loading && !error && visibleProducts.length === 0 && (
-          <div className="rounded-3xl border border-slate-100 bg-white/70 px-6 py-10 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900/80">
-          <p className="font-medium text-slate-700 dark:text-slate-100">
-            No products match your current filters.
-          </p>
-          <button 
-            onClick={() => { setSearch(''); setSelectedCategories([]); setSelectedCompanies([]); }}
-            className="mt-4 text-xs font-semibold text-emerald-500 hover:underline"
-          >
-            Clear all filters
-          </button>
+          {error && (
+            <div className="col-span-full rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+              {error}
+            </div>
+          )}
         </div>
-        )}
-
-        {!loading && error && (
-          <div className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
-            {error}
-          </div>
-        )}
-      </div>
       )}
+
       {/* Quick-view modal */}
       <AnimatePresence>
         {quickViewProduct && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            onClick={() => setQuickViewProduct(null)}
           >
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              initial={{ opacity: 0, y: 20, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.97 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="glass-panel relative max-w-lg overflow-hidden p-4"
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              className="relative max-w-lg overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-soft-xl dark:border-slate-700 dark:bg-slate-900"
+              onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
                 onClick={() => setQuickViewProduct(null)}
-                className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/70 text-slate-100 shadow-sm transition hover:bg-slate-800"
+                className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/90 text-slate-600 shadow-sm backdrop-blur-sm transition hover:bg-white hover:text-slate-900 dark:bg-slate-800/90 dark:text-slate-300"
                 aria-label="Close quick view"
               >
                 <X className="h-4 w-4" />
               </button>
-              <div className="grid gap-4 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-start">
-                <div className="overflow-hidden rounded-2xl bg-slate-900">
+              <div className="grid gap-5 p-5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-start">
+                <div className="overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
                   <img
                     src={quickViewProduct.imageUrl || PLACEHOLDER_IMAGE}
                     alt={quickViewProduct.name}
@@ -389,34 +425,33 @@ export function ProductsPage() {
                   />
                 </div>
                 <div className="space-y-3 text-sm">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-500">
+                  <span className="inline-block rounded-lg bg-brand/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand">
                     {quickViewProduct.category || 'Uncategorised'}
-                  </p>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                  </span>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">
                     {quickViewProduct.name}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     Company:{' '}
-                    <span className="font-medium text-slate-800 dark:text-slate-100">
+                    <span className="font-medium text-slate-700 dark:text-slate-200">
                       {quickViewProduct.company}
                     </span>
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Quantity in stock:{' '}
-                    <span className="font-semibold text-slate-800 dark:text-slate-100">
+                    In stock:{' '}
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">
                       {Number.isFinite(quickViewProduct.quantity)
                         ? quickViewProduct.quantity
                         : '—'}
                     </span>
                   </p>
-                  <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">
+                  <p className="text-xl font-bold text-brand">
                     {Number.isFinite(quickViewProduct.price)
                       ? `RWF ${quickViewProduct.price.toLocaleString()}`
                       : 'Price on request'}
                   </p>
                   <p className="text-[11px] text-slate-400">
-                    For real orders and delivery options, contact the store directly via phone or
-                    WhatsApp.
+                    For orders and delivery, contact the store directly via phone or WhatsApp.
                   </p>
                 </div>
               </div>
@@ -427,4 +462,3 @@ export function ProductsPage() {
     </div>
   );
 }
-
