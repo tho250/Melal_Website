@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ShoppingCart, X, Tag, ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
+import { ShoppingCart, X, Tag, ArrowUpDown, Search, SlidersHorizontal, Plus, Check } from 'lucide-react';
+import { useCart } from '../context/CartContext.jsx';
 
 const PLACEHOLDER_IMAGE =
   'https://images.pexels.com/photos/4397924/pexels-photo-4397924.jpeg?auto=compress&cs=tinysrgb&w=800';
@@ -134,6 +135,15 @@ export function ProductsPage() {
 
     return result;
   }, [products, selectedCompanies, selectedCategories, debouncedSearch, sort, order]);
+
+  const { addItem, items: cartItems } = useCart();
+  const [addedId, setAddedId] = useState(null);
+
+  const handleAddToCart = (product) => {
+    addItem({ id: product.id, name: product.name, imageUrl: product.imageUrl });
+    setAddedId(product.id);
+    setTimeout(() => setAddedId(null), 1200);
+  };
 
   const activeFilterCount =
     selectedCompanies.length + selectedCategories.length + (debouncedSearch ? 1 : 0);
@@ -331,34 +341,39 @@ export function ProductsPage() {
                     <span className="absolute left-3 top-3 rounded-lg bg-white/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-900/90 dark:text-slate-300">
                       {product.category || 'Uncategorised'}
                     </span>
-                    {/* Stock badge */}
-                    {Number.isFinite(product.quantity) && product.quantity === 0 && (
-                      <span className="absolute right-3 top-3 rounded-lg bg-red-500/90 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
-                        Out of Stock
-                      </span>
-                    )}
+
                   </div>
                   <div className="flex flex-col p-4">
                     <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
                       {product.name}
                     </h2>
-                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                      {Number.isFinite(product.quantity)
-                        ? `${product.quantity} in stock`
-                        : 'Stock N/A'}
-                    </p>
+
                     <div className="mt-3 flex items-center justify-between">
                       <p className="text-base font-bold text-slate-900 dark:text-white">
                         {Number.isFinite(product.price)
                           ? `RWF ${product.price.toLocaleString()}`
                           : 'N/A'}
                       </p>
-                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand/10 text-brand opacity-0 transition-all duration-300 group-hover:opacity-100">
-                        <ShoppingCart className="h-3.5 w-3.5" />
-                      </span>
                     </div>
                   </div>
                 </button>
+                <div className="px-4 pb-4">
+                  <button
+                    type="button"
+                    onClick={() => handleAddToCart(product)}
+                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-200 ${
+                      addedId === product.id
+                        ? 'bg-brand text-white'
+                        : 'bg-brand/10 text-brand hover:bg-brand hover:text-white'
+                    }`}
+                  >
+                    {addedId === product.id ? (
+                      <><Check className="h-3.5 w-3.5" /> Added!</>
+                    ) : (
+                      <><Plus className="h-3.5 w-3.5" /> Add to Cart</>
+                    )}
+                  </button>
+                </div>
               </motion.article>
             ))}
 
@@ -437,22 +452,19 @@ export function ProductsPage() {
                       {quickViewProduct.company}
                     </span>
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    In stock:{' '}
-                    <span className="font-semibold text-slate-700 dark:text-slate-200">
-                      {Number.isFinite(quickViewProduct.quantity)
-                        ? quickViewProduct.quantity
-                        : '—'}
-                    </span>
-                  </p>
+
                   <p className="text-xl font-bold text-brand">
                     {Number.isFinite(quickViewProduct.price)
                       ? `RWF ${quickViewProduct.price.toLocaleString()}`
                       : 'Price on request'}
                   </p>
-                  <p className="text-[11px] text-slate-400">
-                    For orders and delivery, contact the store directly via phone or WhatsApp.
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => { handleAddToCart(quickViewProduct); setQuickViewProduct(null); }}
+                    className="w-full rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-brand-dark"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </motion.div>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, ShoppingBasket, Moon, Sun } from 'lucide-react';
+import { Menu, X, ShoppingBasket, ShoppingCart, Moon, Sun } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useCart } from '../../context/CartContext.jsx';
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -10,9 +11,10 @@ const navItems = [
   { label: 'Contact', to: '/contact' }
 ];
 
-export function Navbar({ darkMode, onToggleDarkMode }) {
+export function Navbar({ darkMode, onToggleDarkMode, onOpenCart }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -85,9 +87,35 @@ export function Navbar({ darkMode, onToggleDarkMode }) {
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
+          <button
+            type="button"
+            onClick={onOpenCart}
+            className="relative ml-1 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-600 shadow-sm transition-all duration-200 hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            {totalItems > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white shadow-sm">
+                {totalItems > 99 ? '99+' : totalItems}
+              </span>
+            )}
+          </button>
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
+          <button
+            type="button"
+            onClick={onOpenCart}
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-600 shadow-sm transition hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            {totalItems > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white shadow-sm">
+                {totalItems > 99 ? '99+' : totalItems}
+              </span>
+            )}
+          </button>
           <button
             type="button"
             onClick={onToggleDarkMode}

@@ -5,6 +5,8 @@ import { Navbar } from './components/layout/Navbar.jsx';
 import { Footer } from './components/layout/Footer.jsx';
 import { ScrollToTopButton } from './components/ui/ScrollToTopButton.jsx';
 import { WhatsAppChatButton } from './components/ui/WhatsAppChatButton.jsx';
+import { CartProvider } from './context/CartContext.jsx';
+import { CartDrawer } from './components/cart/CartDrawer.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { ProductsPage } from './pages/ProductsPage.jsx';
 import { AboutPage } from './pages/AboutPage.jsx';
@@ -28,6 +30,7 @@ const pageVariants = {
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -48,9 +51,11 @@ export default function App() {
   };
 
   return (
+    <CartProvider>
     <div className="min-h-screen bg-white text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-50">
-      <Navbar darkMode={darkMode} onToggleDarkMode={handleToggleDarkMode} />
+      <Navbar darkMode={darkMode} onToggleDarkMode={handleToggleDarkMode} onOpenCart={() => setCartOpen(true)} />
       <ScrollToTopOnRouteChange />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
 
       <main className="pb-16 pt-4 md:pt-8">
         <AnimatePresence mode="wait">
@@ -96,6 +101,7 @@ export default function App() {
       <ScrollToTopButton />
       <WhatsAppChatButton />
     </div>
+    </CartProvider>
   );
 }
 
