@@ -36,7 +36,7 @@ export function Footer() {
           <div className="mt-4 h-28 overflow-hidden rounded-xl border border-slate-200/70 bg-slate-100 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <iframe
               title="Boutique La Différence - Zindiro, Kigali"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63812.01868747985!2d30.067!3d-1.92!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca7f8a1a0f2c7%3A0x4c5c177b9c3a3c8d!2sZindiro!5e0!3m2!1sen!2srw!4v1700000000000"
+              src="https://www.google.com/maps?q=-1.9286798,30.1381128&z=17&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -45,7 +45,7 @@ export function Footer() {
             />
           </div>
           <a
-            href="https://www.google.com/maps/dir/?api=1&destination=Zindiro%2C+Kigali%2C+Rwanda"
+            href="https://www.google.com/maps/place/34CQ%2BG77,+KG+11+Ave,+Kigali/@-1.9286798,30.1381128,17z"
             target="_blank"
             rel="noreferrer"
             className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-brand transition hover:text-brand-dark"
