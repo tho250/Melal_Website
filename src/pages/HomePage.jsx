@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { CheckCircle2, Leaf, Truck, ShieldCheck, Quote, Star, ArrowRight, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { CheckCircle2, Leaf, ShieldCheck, Star, ArrowRight, Sparkles } from 'lucide-react';
+import { CinematicHeroSection } from '../components/home/CinematicHeroSection.jsx';
 
 const sectionFade = {
   hidden: { opacity: 0, y: 20 },
@@ -91,157 +92,9 @@ const testimonials = [
 ];
 
 export function HomePage() {
-  const reducedMotion = useReducedMotion();
-  const { scrollY } = useScroll();
-
-  const bgParallaxY = useTransform(scrollY, [0, 450], [0, reducedMotion ? 0 : -40]);
-  const glowParallaxY = useTransform(scrollY, [0, 450], [0, reducedMotion ? 0 : 26]);
-  const badgeParallaxY = useTransform(scrollY, [0, 450], [0, reducedMotion ? 0 : -18]);
-
   return (
     <div className="space-y-20 pb-12 md:space-y-28">
-      {/* ───── Hero Section ───── */}
-      <section className="relative isolate -mx-5 -mt-4 overflow-hidden bg-slate-950 sm:-mx-6 md:-mt-8 lg:-mx-8">
-        {/* Background layers */}
-        <div className="pointer-events-none absolute inset-0">
-          <video
-            className="h-full w-full object-cover opacity-50"
-            autoPlay
-            muted
-            loop
-            playsInline
-          >
-            <source
-              src="https://videos.pexels.com/video-files/5836495/5836495-sd_640_360_25fps.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <motion.div
-            aria-hidden="true"
-            style={{ y: bgParallaxY }}
-            className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/60"
-          />
-          <motion.div
-            aria-hidden="true"
-            style={{ y: glowParallaxY }}
-            className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-emerald-500/20 to-transparent"
-          />
-          {/* Decorative grid pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        </div>
-
-        <div className="relative section-shell grid min-h-[520px] items-center gap-10 py-16 md:min-h-[580px] md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-          >
-            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-emerald-300 backdrop-blur-sm">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Fresh · Local · Trusted
-            </span>
-            <motion.h1
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: 'easeOut' }}
-              className="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-display"
-            >
-              Fresh Groceries,
-              <span className="block bg-gradient-to-r from-emerald-300 to-green-400 bg-clip-text text-transparent">
-                Curated for Zindiro.
-              </span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 26 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
-              className="mt-5 max-w-lg text-base leading-relaxed text-slate-300 md:text-lg"
-            >
-              The warmth of a neighborhood shop with the polish of a modern grocery brand —
-              giving Zindiro access to reliably fresh essentials every day.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
-              className="mt-8 flex flex-wrap items-center gap-3"
-            >
-              <Link
-                to="/products"
-                className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3 text-sm font-semibold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-[0_0_50px_-8px_rgba(22,163,74,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
-              >
-                Shop the collection
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-500/50 bg-white/5 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-400/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-              >
-                Plan your visit
-              </Link>
-            </motion.div>
-
-            <motion.div
-              aria-hidden="true"
-              style={{ y: badgeParallaxY }}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.25, ease: 'easeOut' }}
-              className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-slate-700/60 bg-slate-900/80 px-4 py-2 text-xs text-slate-300 backdrop-blur-sm"
-            >
-              <motion.div
-                animate={reducedMotion ? undefined : { rotate: [0, -6, 0] }}
-                transition={{ duration: 3.4, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
-                className="flex"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-              </motion.div>
-              <span>
-                Serving Zindiro with{' '}
-                <span className="font-semibold text-emerald-300">fair prices</span> every day
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* Hero right card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }}
-            className="relative hidden md:block"
-          >
-            <div className="relative overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/60 shadow-soft-xl backdrop-blur-sm">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(22,163,74,0.25),_transparent_60%)]" />
-              <div className="relative aspect-[4/3] w-full px-6 pb-6 pt-7">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                      Boutique La Différence
-                    </p>
-                    <p className="mt-1.5 text-sm font-semibold text-slate-50">
-                      Zindiro&apos;s premium neighborhood store
-                    </p>
-                  </div>
-                  <div className="rounded-xl border border-slate-700/60 bg-slate-900/80 px-3 py-2 text-right text-[11px] text-slate-300">
-                    <p className="font-semibold text-emerald-300">Open today</p>
-                    <p>8:00am – 10:30pm</p>
-                  </div>
-                </div>
-                <div className="mt-6 grid gap-3 text-xs text-slate-300">
-                  <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-700/40 bg-slate-800/40 px-4 py-3">
-                    <span>Everyday essentials</span>
-                    <span className="font-medium text-emerald-400">Curated brands</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-700/40 bg-slate-800/40 px-4 py-3">
-                    <span>Home utensils &amp; cleaning</span>
-                    <span className="font-medium text-emerald-400">One-stop convenience</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <CinematicHeroSection />
 
       {/* ───── Featured Categories ───── */}
       <section>
@@ -262,31 +115,36 @@ export function HomePage() {
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((cat, idx) => (
-            <motion.article
+            <Link
               key={cat.name}
-              custom={idx}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={sectionFade}
-              className="group card-base card-hover flex flex-col p-5"
+              to={`/products?category=${encodeURIComponent(cat.name.toLowerCase())}`}
+              className="group"
             >
-              <div
-                className={`inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient} text-white shadow-sm`}
+              <motion.article
+                custom={idx}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={sectionFade}
+                className="card-base card-hover flex h-full flex-col p-5"
               >
-                <cat.icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
-                {cat.name}
-              </h3>
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {cat.description}
-              </p>
-              <span className="mt-auto flex items-center gap-1 pt-4 text-xs font-semibold text-brand opacity-0 transition-all duration-300 group-hover:opacity-100">
-                View items
-                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </motion.article>
+                <div
+                  className={`inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient} text-white shadow-sm`}
+                >
+                  <cat.icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
+                  {cat.name}
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                  {cat.description}
+                </p>
+                <span className="mt-auto flex items-center gap-1 pt-4 text-xs font-semibold text-brand opacity-0 transition-all duration-300 group-hover:opacity-100">
+                  View items
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </motion.article>
+            </Link>
           ))}
         </div>
       </section>
