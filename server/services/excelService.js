@@ -73,6 +73,18 @@ export function parseInventoryFile() {
       const rawName = row['Product Name'] || '';
       const rawQuantity = row['Quantity'] || 0;
       const rawPrice = row['Price'] || 0;
+      const rawCostPrice =
+        row['Cost Price'] ??
+        row['cost price'] ??
+        row['Cost'] ??
+        row['cost'] ??
+        row['Buying Price'] ??
+        row['buying price'] ??
+        row['Buy Price'] ??
+        row['buy price'] ??
+        row['Purchase Price'] ??
+        row['purchase price'] ??
+        0;
 
       const nameClean = normalizeWhitespace(rawName);
       if (!nameClean) {
@@ -83,6 +95,7 @@ export function parseInventoryFile() {
 
       const price = Number(rawPrice) || 0;
       const quantity = Number(rawQuantity) || 0;
+      const costPrice = Number(rawCostPrice) || 0;
 
       allProducts.push({
         id: idCounter++,
@@ -90,7 +103,8 @@ export function parseInventoryFile() {
         company,
         category,
         price,
-        quantity
+        quantity,
+        costPrice
       });
     });
   });

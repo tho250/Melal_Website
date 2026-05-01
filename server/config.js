@@ -17,3 +17,7 @@ export const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY || '';
 export const IMAGE_CACHE_PATH =
   process.env.IMAGE_CACHE_PATH || path.join(__dirname, '/cache', 'imageCache.json');
 
+export const WHATSAPP_INSTANCE_ID = process.env.WHATSAPP_INSTANCE_ID || '';
+export const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || '';
+export const WHATSAPP_OWNER_NUMBER = process.env.WHATSAPP_OWNER_NUMBER || '250794018454';
+

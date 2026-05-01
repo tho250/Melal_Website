@@ -2,8 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { PORT } from './config.js';
+import {
+  PORT,
+  WHATSAPP_ACCESS_TOKEN,
+  WHATSAPP_OWNER_NUMBER,
+  WHATSAPP_INSTANCE_ID
+} from './config.js';
 import { getProducts } from './services/excelService.js';
+import { enrichProductsWithShadowImages } from './services/imageService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,10 +72,12 @@ function applyFiltersAndSorting(products, query) {
   return result;
 }
 
-app.get('/api/products', (req, res) => {
+app.get('/api/products', async (req, res) => {
   try {
     const baseProducts = getProducts();
-    const processed = applyFiltersAndSorting(baseProducts, req.query);
+    const withImages = enrichProductsWithShadowImages(baseProducts);
+    const processed = applyFiltersAndSorting(withImages, req.query);
+
     // Debug log for API response size
     // eslint-disable-next-line no-console
     console.log('[server] /api/products count:', processed.length);
@@ -78,6 +86,76 @@ app.get('/api/products', (req, res) => {
     // eslint-disable-next-line no-console
     console.error('Error loading products', error);
     res.status(500).json({ error: 'Failed to load products from inventory.' });
+  }
+});
+
+app.post('/api/notify-owner', async (req, res) => {
+  const { items, totalPrice, totalProfit } = req.body || {};
+
+  if (!WHATSAPP_INSTANCE_ID || !WHATSAPP_ACCESS_TOKEN) {
+    return res.status(503).json({ error: 'WhatsApp Business API not configured.' });
+  }
+
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'No items provided.' });
+  }
+
+  const lines = [
+    '🔔 *New Order Received*',
+    '',
+    '📦 *Items:*'
+  ];
+
+  items.forEach((item) => {
+    const lineTotal = Number(item.price) > 0
+      ? ` — RWF ${(Number(item.price) * item.qty).toLocaleString()}`
+      : '';
+    lines.push(`  • ${item.name} × ${item.qty}${lineTotal}`);
+  });
+
+  lines.push('');
+  if (Number(totalPrice) > 0) {
+    lines.push(`💰 *Revenue:* RWF ${Number(totalPrice).toLocaleString()}`);
+  }
+  if (Number(totalProfit) > 0) {
+    lines.push(`📈 *Profit:*  RWF ${Number(totalProfit).toLocaleString()}`);
+  }
+  lines.push('', '— Boutique La Difference POS');
+
+  const messageBody = lines.join('\n');
+
+  const chatId = WHATSAPP_OWNER_NUMBER.includes('@') ? WHATSAPP_OWNER_NUMBER : `${WHATSAPP_OWNER_NUMBER}@c.us`;
+
+  try {
+    const waRes = await fetch(
+      `https://waapi.app/api/v1/instances/${WHATSAPP_INSTANCE_ID}/client/action/send-message`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+        },
+        body: JSON.stringify({
+          chatId,
+          message: messageBody
+        })
+      }
+    );
+
+    if (!waRes.ok) {
+      const errJson = await waRes.json().catch(() => ({}));
+      // eslint-disable-next-line no-console
+      console.error('[notify-owner] WaAPI error:', errJson);
+      return res.status(502).json({ error: 'WaAPI rejected the request.', detail: errJson });
+    }
+
+    const data = await waRes.json();
+    return res.json({ ok: true, messageId: data?.data?._data?.id?._serialized });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[notify-owner] fetch error:', err);
+    return res.status(500).json({ error: 'Failed to send WhatsApp notification.' });
   }
 });
 

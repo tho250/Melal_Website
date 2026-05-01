@@ -7,6 +7,7 @@ import { ScrollToTopButton } from './components/ui/ScrollToTopButton.jsx';
 import { WhatsAppChatButton } from './components/ui/WhatsAppChatButton.jsx';
 import { CartProvider } from './context/CartContext.jsx';
 import { CartDrawer } from './components/cart/CartDrawer.jsx';
+import { CartSummaryBar } from './components/cart/CartSummaryBar.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { ProductsPage } from './pages/ProductsPage.jsx';
 import { AboutPage } from './pages/AboutPage.jsx';
@@ -56,6 +57,7 @@ export default function App() {
       <Navbar darkMode={darkMode} onToggleDarkMode={handleToggleDarkMode} onOpenCart={() => setCartOpen(true)} />
       <ScrollToTopOnRouteChange />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartSummaryBar onOpenCart={() => setCartOpen(true)} />
 
       <main className="pb-16 pt-4 md:pt-8">
         <AnimatePresence mode="wait">

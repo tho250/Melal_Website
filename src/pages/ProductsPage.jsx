@@ -146,7 +146,7 @@ export function ProductsPage() {
   const [addedId, setAddedId] = useState(null);
 
   const handleAddToCart = (product) => {
-    addItem({ id: product.id, name: product.name, imageUrl: product.imageUrl });
+    addItem({ id: product.id, name: product.name, imageUrl: product.imageUrl, price: product.price, costPrice: product.costPrice });
     setAddedId(product.id);
     setTimeout(() => setAddedId(null), 1200);
   };

@@ -8,7 +8,7 @@ const WHATSAPP_NUMBER = '250794018454';
 const PLACEHOLDER_IMAGE =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2UyZThmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzk0YTNiOCI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+';
 
-function buildWhatsAppMessage(items) {
+function buildWhatsAppMessage(items, totalPrice) {
   const lines = [
     'Hello, I would like to place an order:',
     '',
@@ -16,22 +16,38 @@ function buildWhatsAppMessage(items) {
   ];
 
   items.forEach((item) => {
-    lines.push(`- Product: ${item.name} | Qty: ${item.qty}`);
+    const lineTotal =
+      Number(item.price) > 0
+        ? ` — RWF ${(Number(item.price) * item.qty).toLocaleString()}`
+        : '';
+    lines.push(`- ${item.name} × ${item.qty}${lineTotal}`);
   });
 
-  lines.push('', 'Please confirm availability and total price.', '', 'Thank you.');
+  if (totalPrice > 0) {
+    lines.push('', `💰 Total: RWF ${totalPrice.toLocaleString()}`);
+  }
+
+  lines.push('', 'Please confirm availability.', '', 'Thank you.');
 
   return lines.join('\n');
 }
 
 export function CartDrawer({ open, onClose }) {
-  const { items, removeItem, updateQty, clearCart, totalItems } = useCart();
+  const { items, removeItem, updateQty, clearCart, totalItems, totalPrice, totalProfit } = useCart();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleOrderWhatsApp = () => {
-    const message = buildWhatsAppMessage(items);
+    const message = buildWhatsAppMessage(items, totalPrice);
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
+
+    // Notify store owner via WhatsApp Business API (fire-and-forget)
+    fetch('/api/notify-owner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items, totalPrice, totalProfit }),
+    }).catch(() => {/* non-critical – silently ignore */});
+
     clearCart();
     setShowConfirm(false);
     onClose();
@@ -121,7 +137,12 @@ export function CartDrawer({ open, onClose }) {
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <div className="flex items-center">
+                        {Number(item.price) > 0 && (
+                          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                            RWF {Number(item.price).toLocaleString()} each
+                          </p>
+                        )}
+                        <div className="mt-1 flex items-center justify-between">
                           <div className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                             <button
                               type="button"
@@ -142,6 +163,11 @@ export function CartDrawer({ open, onClose }) {
                               <Plus className="h-3 w-3" />
                             </button>
                           </div>
+                          {Number(item.price) > 0 && (
+                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                              RWF {(Number(item.price) * item.qty).toLocaleString()}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </li>
@@ -153,8 +179,15 @@ export function CartDrawer({ open, onClose }) {
             {/* Footer */}
             {items.length > 0 && (
               <div className="border-t border-slate-200/80 px-5 py-4 dark:border-slate-800">
-                <div className="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                  {totalItems} item{totalItems !== 1 ? 's' : ''} in your cart
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    {totalItems} item{totalItems !== 1 ? 's' : ''} in your cart
+                  </span>
+                  {totalPrice > 0 && (
+                    <span className="text-sm font-bold text-slate-900 dark:text-white">
+                      RWF {totalPrice.toLocaleString()}
+                    </span>
+                  )}
                 </div>
                 <button
                   type="button"
@@ -215,10 +248,20 @@ export function CartDrawer({ open, onClose }) {
                             key={item.id}
                             className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300"
                           >
-                            <span className="truncate pr-2">{item.name}</span>
-                            <span className="flex-shrink-0 font-medium">× {item.qty}</span>
+                            <span className="truncate pr-2">{item.name} × {item.qty}</span>
+                            {Number(item.price) > 0 && (
+                              <span className="flex-shrink-0 font-medium">
+                                RWF {(Number(item.price) * item.qty).toLocaleString()}
+                              </span>
+                            )}
                           </li>
                         ))}
+                        {totalPrice > 0 && (
+                          <li className="mt-2 flex items-center justify-between border-t border-slate-200 pt-2 text-xs font-bold text-slate-900 dark:border-slate-700 dark:text-white">
+                            <span>Total</span>
+                            <span>RWF {totalPrice.toLocaleString()}</span>
+                          </li>
+                        )}
                       </ul>
                     </div>
 
