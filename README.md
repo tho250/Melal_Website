@@ -10,7 +10,7 @@ This project is a full-stack web application featuring a React frontend (built w
 - **Inventory Management:** Product data is sourced directly from an Excel file (`data/inventory.xlsx`), making it easy for store owners to update products without touching code.
 - **Product Filtering & Sorting:** The backend API supports dynamic filtering by category and company, as well as sorting by price, category, or company.
 - **Single-Server Deployment:** The Express backend is configured to serve both the API endpoints and the static files of the compiled React frontend, simplifying deployment.
-- **WhatsApp Integration:** Includes a floating WhatsApp chat button for direct customer communication.
+- **WhatsApp Integration:** Includes customer chat redirection and self-hosted owner notifications using `whatsapp-web.js`.
 
 ## Tech Stack
 
@@ -50,6 +50,23 @@ This project is a full-stack web application featuring a React frontend (built w
      npm run server
      ```
      This will start the backend server using nodemon for automatic restarts on changes, usually on `http://localhost:5000`.
+
+### Self-Hosted WhatsApp Owner Notifications (100% Free)
+
+This project sends owner order/profit notifications with `whatsapp-web.js` (no paid API provider required).
+
+1. Set environment values in `.env`:
+   - `WHATSAPP_OWNER_NUMBER` (digits only, no `+`)
+   - `WHATSAPP_SESSION_NAME` (default `store-owner`)
+   - `WHATSAPP_HEADLESS=false` for first-time pairing
+   - `WHATSAPP_CHROME_EXECUTABLE_PATH` only if browser auto-detection fails
+
+2. Start the backend (`npm run server`) and scan the QR shown in terminal.
+
+3. When paired, server logs show `[whatsapp-web.js] Client is ready.` and `/api/notify-owner` starts sending messages to the owner automatically.
+
+4. Optional health check endpoint:
+   - `GET /api/whatsapp/status` → `{ configured, initialized, ready }`
 
 ## Production Build & Deployment
 

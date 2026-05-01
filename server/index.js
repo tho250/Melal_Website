@@ -2,14 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import {
-  PORT,
-  WHATSAPP_ACCESS_TOKEN,
-  WHATSAPP_OWNER_NUMBER,
-  WHATSAPP_INSTANCE_ID
-} from './config.js';
+import { PORT } from './config.js';
 import { getProducts } from './services/excelService.js';
 import { enrichProductsWithShadowImages } from './services/imageService.js';
+import {
+  getWhatsAppStatus,
+  sendOwnerWhatsAppMessage
+} from './services/whatsappService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -92,10 +91,6 @@ app.get('/api/products', async (req, res) => {
 app.post('/api/notify-owner', async (req, res) => {
   const { items, totalPrice, totalProfit } = req.body || {};
 
-  if (!WHATSAPP_INSTANCE_ID || !WHATSAPP_ACCESS_TOKEN) {
-    return res.status(503).json({ error: 'WhatsApp Business API not configured.' });
-  }
-
   if (!Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ error: 'No items provided.' });
   }
@@ -124,39 +119,21 @@ app.post('/api/notify-owner', async (req, res) => {
 
   const messageBody = lines.join('\n');
 
-  const chatId = WHATSAPP_OWNER_NUMBER.includes('@') ? WHATSAPP_OWNER_NUMBER : `${WHATSAPP_OWNER_NUMBER}@c.us`;
-
   try {
-    const waRes = await fetch(
-      `https://waapi.app/api/v1/instances/${WHATSAPP_INSTANCE_ID}/client/action/send-message`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`
-        },
-        body: JSON.stringify({
-          chatId,
-          message: messageBody
-        })
-      }
-    );
-
-    if (!waRes.ok) {
-      const errJson = await waRes.json().catch(() => ({}));
-      // eslint-disable-next-line no-console
-      console.error('[notify-owner] WaAPI error:', errJson);
-      return res.status(502).json({ error: 'WaAPI rejected the request.', detail: errJson });
-    }
-
-    const data = await waRes.json();
-    return res.json({ ok: true, messageId: data?.data?._data?.id?._serialized });
+    const messageId = await sendOwnerWhatsAppMessage(messageBody);
+    return res.json({ ok: true, messageId });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('[notify-owner] fetch error:', err);
-    return res.status(500).json({ error: 'Failed to send WhatsApp notification.' });
+    console.error('[notify-owner] whatsapp-web.js send error:', err);
+    return res.status(503).json({
+      error: 'Failed to send WhatsApp notification.',
+      detail: err?.message || 'unknown_error'
+    });
   }
+});
+
+app.get('/api/whatsapp/status', (req, res) => {
+  res.json(getWhatsAppStatus());
 });
 
 // Any other request that doesn't match an API route should serve the React app

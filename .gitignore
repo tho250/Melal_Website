@@ -124,3 +124,8 @@ dist
 # Vite output
 dist-ssr
 *.local
+
+# whatsapp-web.js session & cache (never commit these)
+.wwebjs_auth/
+.wwebjs_cache/
+server/cache/

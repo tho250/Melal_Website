@@ -41,7 +41,7 @@ export function CartDrawer({ open, onClose }) {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
 
-    // Notify store owner via WhatsApp Business API (fire-and-forget)
+    // Notify store owner via self-hosted whatsapp-web.js backend (fire-and-forget)
     fetch('/api/notify-owner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
