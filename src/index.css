@@ -83,4 +83,14 @@
   .input-base {
     @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-brand focus:ring-2 focus:ring-brand/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 dark:placeholder:text-slate-500;
   }
+
+  /* Lazy-loaded image placeholder */
+  img[loading="lazy"] {
+    @apply bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700;
+  }
+
+  /* For images with data-src or similar lazy loading implementations */
+  .lazy-load-image {
+    @apply bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700;
+  }
 }

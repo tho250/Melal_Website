@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Leaf, ShieldCheck, Star, ArrowRight, Sparkles } from 'lucide-react';
 import { CinematicHeroSection } from '../components/home/CinematicHeroSection.jsx';
+import { FeaturedProductsGrid } from '../components/home/FeaturedProductsGrid.jsx';
 
 const sectionFade = {
   hidden: { opacity: 0, y: 20 },
@@ -95,6 +96,9 @@ export function HomePage() {
   return (
     <div className="space-y-20 pb-12 md:space-y-28">
       <CinematicHeroSection />
+
+      {/* ───── Quick Links / Featured Products ───── */}
+      <FeaturedProductsGrid />
 
       {/* ───── Featured Categories ───── */}
       <section>

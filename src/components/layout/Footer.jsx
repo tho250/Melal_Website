@@ -25,14 +25,18 @@ export function Footer() {
   return (
     <footer className="mt-20 border-t border-slate-100 bg-slate-50/60 py-10 text-sm text-slate-600 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-300">
       <div className="section-shell grid gap-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <div>
+        <div itemScope itemType="https://schema.org/LocalBusiness">
           <h3 className="text-base font-bold text-slate-900 dark:text-white">
-            Boutique La Différence
+            <span itemProp="name">Boutique La Différence</span>
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-            A premium neighborhood grocery and home utensils store in Zindiro, Kigali — combining
-            freshness, thoughtful curation, and warm service for every visit.
+            <span itemProp="description">
+              A premium neighborhood grocery and home utensils store in Zindiro, Kigali — combining
+              freshness, thoughtful curation, and warm service for every visit.
+            </span>
           </p>
+          <meta itemProp="latitude" content="-1.9286798" />
+          <meta itemProp="longitude" content="30.1381128" />
           <div className="mt-4 h-28 overflow-hidden rounded-xl border border-slate-200/70 bg-slate-100 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <iframe
               title="Boutique La Différence - Zindiro, Kigali"
@@ -62,12 +66,18 @@ export function Footer() {
           <div className="mt-3 space-y-2.5 text-sm">
             <p className="flex items-start gap-2.5">
               <MapPin className="mt-0.5 h-4 w-4 text-brand" />
-              <span>Zindiro, Kigali, Rwanda</span>
+              <span itemScope itemType="https://schema.org/PostalAddress">
+                <span itemProp="streetAddress">Zindiro</span>, 
+                <span itemProp="addressLocality"> Kigali</span>, 
+                <span itemProp="addressCountry"> Rwanda</span>
+              </span>
             </p>
             <p className="flex items-center gap-2.5">
               <Phone className="h-4 w-4 text-brand" />
               <a href="tel:+250794018454" className="hover:text-brand">
-                +250 794 018 454
+                <span itemScope itemType="https://schema.org/Organization">
+                  <span itemProp="telephone">+250 794 018 454</span>
+                </span>
               </a>
             </p>
             <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-slate-100 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700">

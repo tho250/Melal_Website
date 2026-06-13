@@ -17,12 +17,19 @@ export function AboutPage() {
       {/* Hero header */}
       <section className="max-w-2xl">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          About Boutique La Différence
+          About 
+          <span itemScope itemType="https://schema.org/LocalBusiness">
+            <span itemProp="name"> Boutique La Différence</span>
+          </span>
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-          Boutique La Différence was created to bring a more organised, premium, and trustworthy
-          grocery experience to the heart of Zindiro in Kigali. We combine the familiarity of a
-          neighborhood shop with the standards of a modern retail store.
+          <span itemScope itemType="https://schema.org/LocalBusiness">
+            <span itemProp="description">
+              Boutique La Différence was created to bring a more organised, premium, and trustworthy
+              grocery experience to the heart of Zindiro in Kigali. We combine the familiarity of a
+              neighborhood shop with the standards of a modern retail store.
+            </span>
+          </span>
         </p>
       </section>
 
